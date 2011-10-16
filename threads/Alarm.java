@@ -44,6 +44,7 @@ public class Alarm {
   public void timerInterrupt() {
     //loop over all the waiting threads and check to see if they can be
     //woken up
+    Machine.interrupt().disable();
     while(!waitingThreads.isEmpty()){
 
       if(wakeUpTimes.peekFirst().longValue() < Machine.timer().getTime()){
@@ -51,6 +52,7 @@ public class Alarm {
         wakeUpTimes.removeFirst();
       }
     }
+    Machine.interrupt().enable();
     KThread.currentThread().yield();
   }
 
