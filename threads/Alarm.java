@@ -21,11 +21,14 @@ public class Alarm {
 
   private LinkedList<KThread> waitingThreads;
   private LinkedList<Long> wakeUpTimes;
+
+  private Lock startWaitingLock;
   
 
   public Alarm() {
     this.waitingThreads = new LinkedList<KThread>();
     this.wakeUpTimes = new LinkedList<Long>();
+    this.startWaitingLock = new Lock();
 
     Machine.timer().setInterruptHandler(new Runnable() {
       public void run() { timerInterrupt(); }
@@ -71,8 +74,10 @@ public class Alarm {
     long wakeTime = Machine.timer().getTime() + x;
     Long wake = new Long(wakeTime);
 
+    this.startWaitingLock.acquire();
     this.waitingThreads.add(KThread.currentThread());
     this.wakeUpTimes.add(wake);
+    this.startWaitingLock.release();
 
     KThread.currentThread().sleep();
   }
