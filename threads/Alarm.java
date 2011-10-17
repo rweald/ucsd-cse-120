@@ -2,6 +2,7 @@ package nachos.threads;
 
 import nachos.machine.*;
 import java.util.LinkedList;
+import java.util.Iterator;
 
 /**
  * Uses the hardware timer to provide preemption, and to allow threads to sleep
@@ -45,11 +46,17 @@ public class Alarm {
     //loop over all the waiting threads and check to see if they can be
     //woken up
     Machine.interrupt().disable();
-    while(!waitingThreads.isEmpty()){
+    Iterator waitingIterator = waitingThreads.iterator();
+    Iterator timeIterator = wakeUpTimes.iterator();
 
-      if(wakeUpTimes.peekFirst().longValue() < Machine.timer().getTime()){
-        waitingThreads.removeFirst().ready();
-        wakeUpTimes.removeFirst();
+    while(waitingIterator.hasNext()){
+      Long wake_up = (Long) timeIterator.next();
+      KThread thread_to_wake = (KThread) waitingIterator.next();
+
+      if(wake_up.longValue() < Machine.timer().getTime()){
+        thread_to_wake.ready();
+        waitingIterator.remove();
+        timeIterator.remove();
       }
     }
     Machine.interrupt().enable();
