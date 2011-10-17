@@ -281,6 +281,9 @@ public class KThread {
     Lib.debug(dbgThread, "Joining to thread: " + toString());
     Lib.assertTrue(this != currentThread, "Can Not call join on current thread.");
 
+    if(this.status == statusFinished)
+      return;
+
     joined_thread = currentThread;
     currentThread.sleep();
 
