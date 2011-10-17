@@ -79,7 +79,6 @@ public class Alarm {
    */
   public void waitUntil(long x) {
     // for now, cheat just to get something working (busy waiting is bad)
-    Lib.assertNotReached();
     long wakeTime = Machine.timer().getTime() + x;
     Long wake = new Long(wakeTime);
 
